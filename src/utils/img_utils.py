@@ -31,3 +31,11 @@ def copy_images(source_path, destination_path,
         img = imresize(img, resize_factor)
 
         imsave(destination_path, img)
+
+def ImageOpen(file):
+    return Image.open(file)
+    #TODO: use half-size images to reproduce paper results
+    #img = Image.open(file)
+    #w, h = img.size
+    #img = img.resize((int(w * 0.5), int(h * 0.5)))
+    #return img

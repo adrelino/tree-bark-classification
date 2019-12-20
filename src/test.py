@@ -4,7 +4,7 @@ import torch
 import os
 import json
 import math
-from PIL import Image
+from img_utils import ImageOpen
 import numpy as np
 
 CROP_SIZE = 224
@@ -36,7 +36,7 @@ class Test:
         self._create_test_file(test_file_name)
         for file in self.dataset['files']:
             class_name = file.split('/')[-2]
-            img = Image.open(file)
+            img = ImageOpen(file)
             crops = self.split_crops(img)
 
             if len(crops) > 0:
@@ -60,7 +60,7 @@ class Test:
         times = []
         for i, file in enumerate(self.dataset['files']):
             start = time.time()
-            img = Image.open(file)
+            img = ImageOpen(file)
             crop = ToTensor()(RandomCrop(224)(img))
 
             batch_input.append(crop)
@@ -169,9 +169,9 @@ class Test:
 
 if __name__ == '__main__':
     model = str(0)
-    log_path = '/home/mathieu/Universite/Maitrise/bark_classifier/log/'
+    log_path = '../log/'
 
-    model_path = 'train_config' + '/' + model
+    model_path = 'config' + '/' + model
 
     dataset_file = os.path.join(log_path, model_path, 'dataset')
     dataset_file = open(dataset_file)
@@ -179,4 +179,5 @@ if __name__ == '__main__':
     dataset_file.close()
 
     test = Test(model, model_path, log_path, dataset=loaded_dataset['test'], multitask=False)
-    test.run(test_file_name='test_run')
+    with torch.no_grad():
+        test.run(test_file_name='test_run')
